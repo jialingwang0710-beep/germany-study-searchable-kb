@@ -55,9 +55,10 @@
               area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
               document.body.appendChild(area);
               area.select();
-              document.execCommand('copy');
+              const copied = document.execCommand('copy');
               area.remove();
-              done();
+              if (copied) done();
+              else toast('复制失败，请长按文字复制');
             };
             if (navigator.clipboard && window.isSecureContext) {
               navigator.clipboard.writeText(answer).then(done).catch(fallback);
@@ -65,7 +66,7 @@
               fallback();
             }
           }
-        <\\/script></body>`);
+        <\/script></body>`);
       document.open();
       document.write(enhanced);
       document.close();
