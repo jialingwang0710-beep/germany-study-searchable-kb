@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f2ed">
+  <title>德国留学可搜索资料库</title>
+</head>
+<body>
+  <p id="loading">正在加载资料库…</p>
+  <script>
+    const sourceFile = './德国留学可搜索资料库_v1.3_买家正式版.html';
+    const mobileEnhancements = `
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="default">
+      <style>
+        html { -webkit-text-size-adjust: 100%; }
+        button, input { font: inherit; }
+        @media (max-width: 760px) {
+          header { padding: 24px 16px 16px; }
+          .eyebrow { font-size: 10px; letter-spacing: .1em; }
+          h1 { font-size: 27px; }
+          .sub { font-size: 14px; line-height: 1.65; }
+          .toolbar-inner { padding: 10px 16px 12px; }
+          .search { min-height: 50px; padding: 13px 14px; }
+          .searchrow > button { min-height: 44px; flex: 1; }
+          .searchrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+          .searchrow .search { grid-column: 1 / -1; }
+          .filters { margin: 0 -16px; padding: 10px 16px 2px; gap: 7px; -webkit-overflow-scrolling: touch; }
+          .filters button { white-space: nowrap; min-height: 40px; }
+          main { padding: 14px 16px 48px; }
+          .stats { gap: 12px; align-items: flex-start; line-height: 1.45; }
+          .stats span:last-child { text-align: right; }
+          .grid { gap: 10px; }
+          .head { min-height: 92px; padding: 15px 16px; -webkit-tap-highlight-color: transparent; }
+          .q { font-size: 17px; }
+          .body { padding: 16px; }
+          .actions button { min-height: 44px; flex: 1; }
+          .footer { padding: 0 16px calc(28px + env(safe-area-inset-bottom)); }
+          #toast { left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); text-align: center; }
+        }
+      </style>`;
+
+    function injectPage(html) {
+      const enhanced = html
+        .replace('</head>', mobileEnhancements + '</head>')
+        .replace('</body>', `<script>
+          function copyAnswer(i, rows) {
+            const answer = rows[i].answer;
+            const done = () => toast('已复制回答');
+            const fallback = () => {
+              const area = document.createElement('textarea');
+              area.value = answer;
+              area.setAttribute('readonly', '');
+              area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+              document.body.appendChild(area);
+              area.select();
+              document.execCommand('copy');
+              area.remove();
+              done();
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+              navigator.clipboard.writeText(answer).then(done).catch(fallback);
+            } else {
+              fallback();
+            }
+          }
+        <\\/script></body>`);
+      document.open();
+      document.write(enhanced);
+      document.close();
+    }
+
+    fetch(sourceFile)
+      .then(response => {
+        if (!response.ok) throw new Error('资料库文件未找到');
+        return response.text();
+      })
+      .then(injectPage)
+      .catch(() => {
+        document.getElementById('loading').innerHTML = '资料库加载失败，请<a href="' + sourceFile + '">点击直接打开</a>。';
+      });
+  </script>
+</body>
+</html>
